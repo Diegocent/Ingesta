@@ -1,0 +1,25 @@
+# PostgreSQL local para el Data Warehouse NUEVO.
+# No apunta al Neon de producción. Puerto 5434: el 5432 y el 5433 ya están
+# ocupados por otros contenedores en esta máquina.
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: sen_dw_dev
+    restart: unless-stopped
+    ports:
+      - "5434:5432"
+    environment:
+      POSTGRES_DB: sen_dw_dev
+      POSTGRES_USER: sen
+      POSTGRES_PASSWORD: sen_dev_local
+    volumes:
+      - sen_dw_dev_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U sen -d sen_dw_dev"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  sen_dw_dev_data:
